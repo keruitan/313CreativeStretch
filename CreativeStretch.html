@@ -34,7 +34,7 @@ See additional libraries, guides, and examples at:
   <img id="source" src="./200px-Pac_Man.svg.png"
        width="300" height="227">
 </div>
-<div id="main">
+<!-- <div id="main">
   <button id="pause" onclick="togglePause()">Pause</button>
   <input type="checkbox" id="pauseOnGesture" onclick="pauseForGestures()">Pause on gesture</input>
   <h3>Frame data:</h3>
@@ -48,10 +48,45 @@ See additional libraries, guides, and examples at:
   <div style="clear:both;"></div>
   <h3>Gesture data:</h3>
   <div id="gestureData"></div>
-</div>
+</div> -->
 
 </body>
-<script src="https://js.leapmotion.com/leap-plugins-0.1.8.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r82/three.js"></script>
+<script src="https://js.leapmotion.com/leap-plugins-0.1.12.js"></script>
+<script src="OrbitControls.js"></script>
+<script type="text/javascript">
+	Leap.loop()
+	//    .use('transform', {vr: true})
+	    .use('boneHand', {
+	      targetEl: document.body,
+	      arm: false,
+	      opacity: 0.8
+	    });
+
+	var scene    = Leap.loopController.plugins.boneHand.scene;
+  var camera   = Leap.loopController.plugins.boneHand.camera;
+  var renderer = Leap.loopController.plugins.boneHand.renderer;
+  /*var plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(80,80),
+    new THREE.MeshPhongMaterial({wireframe: false, side: THREE.DoubleSide})
+  );
+  plane.scale.set(2,2,2);
+  plane.position.set(0,200,-100);
+  plane.receiveShadow = true;
+  scene.add(plane);*/
+  //camera.lookAt( plane.position );
+  //var axisHelper = new THREE.AxisHelper( 100 );
+  //scene.add( axisHelper );
+  var controls = new THREE.OrbitControls( camera, renderer.domElement );
+  Leap.loopController.on('handFound', function(hand) {
+    document.querySelector('canvas').style.display = 'block';
+  }).on('handLost', function(hand){
+    if (Leap.loopController.frame(0).hands.length === 0){
+      document.querySelector('canvas').style.display = 'none';
+    }
+  });
+  //document.getElementById('view-source').href = "view-source:" + window.location.href
+</script>
 
 <script type="text/javascript">
 	var cats = {};
@@ -92,13 +127,39 @@ See additional libraries, guides, and examples at:
 
 	};
 
-	cats[0] = new Cat();
+	var Pacman = function() {
+	  var pacman = this;
+	  var img = document.createElement('img');
+	  img.src = './200px-Pac_Man.svg.png';
+	  img.style.position = 'absolute';
+	  img.onload = function () {
+	    pacman.setTransform([window.innerWidth/2,window.innerHeight/2], 0);
+	    document.body.appendChild(img);
+	  }
+	  
+	  pacman.setTransform = function(position, rotation) {
+
+	    img.style.left = position[0] - img.width  / 2 + 'px';
+	    img.style.top  = position[1] - img.height / 2 + 'px';
+
+	    img.style.transform = 'rotate(' + -rotation + 'rad)';
+	    
+	    img.style.webkitTransform = img.style.MozTransform = img.style.msTransform =
+	    img.style.OTransform = img.style.transform;
+
+	  };
+
+	};
+
+	//cats[0] = new Cat();
+	//cats[1] = new Pacman();
+	//cats[2] = new Cat();
 
 	// This allows us to move the cat even whilst in an iFrame.
-	Leap.loopController.setBackground(true)
+	//Leap.loopController.setBackground(true)
 </script>
 
-<script>
+<!-- <script>
 // Store frame for motion functions
 var previousFrame = null;
 var paused = false;
@@ -313,6 +374,6 @@ function pauseForGestures() {
   }
 }
 
-</script>
+</script> -->
 
 </html>
