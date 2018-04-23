@@ -24,6 +24,80 @@ See additional libraries, guides, and examples at:
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Leap Motion Creative Stretch</title>
 <script src="leap-0.6.4.js"></script>
+<script src="https://js.leapmotion.com/leap-0.6.4.js"></script>
+</head>
+
+<body>
+<h1>Leap Motion Creative Stretch</h1>
+<!-- <canvas id="canvas" width="800" height="600"></canvas> -->
+<div style="display:none;">
+  <img id="source" src="./200px-Pac_Man.svg.png"
+       width="300" height="227">
+</div>
+<div id="main">
+  <button id="pause" onclick="togglePause()">Pause</button>
+  <input type="checkbox" id="pauseOnGesture" onclick="pauseForGestures()">Pause on gesture</input>
+  <h3>Frame data:</h3>
+  <div id="frameData"></div>
+  <div style="clear:both;"></div>
+  <h3>Hand data:</h3>
+  <div id="handData"></div>
+  <div style="clear:both;"></div>
+  <h3>Finger and tool data:</h3>
+  <div id="pointableData"></div>
+  <div style="clear:both;"></div>
+  <h3>Gesture data:</h3>
+  <div id="gestureData"></div>
+</div>
+
+</body>
+<script src="https://js.leapmotion.com/leap-plugins-0.1.8.js"></script>
+
+<script type="text/javascript">
+	var cats = {};
+
+	Leap.loop(function(frame) {
+
+	  frame.hands.forEach(function(hand, index) {
+	    
+	    var cat = ( cats[index] || (cats[index] = new Cat()) );    
+	    cat.setTransform(hand.screenPosition(), hand.roll());
+	    
+	  });
+	  
+	}).use('screenPosition', {scale: 0.25});
+
+
+	var Cat = function() {
+	  var cat = this;
+	  var img = document.createElement('img');
+	  img.src = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/109794/cat_2.png';
+	  img.style.position = 'absolute';
+	  img.onload = function () {
+	    cat.setTransform([window.innerWidth/2,window.innerHeight/2], 0);
+	    document.body.appendChild(img);
+	  }
+	  
+	  cat.setTransform = function(position, rotation) {
+
+	    img.style.left = position[0] - img.width  / 2 + 'px';
+	    img.style.top  = position[1] - img.height / 2 + 'px';
+
+	    img.style.transform = 'rotate(' + -rotation + 'rad)';
+	    
+	    img.style.webkitTransform = img.style.MozTransform = img.style.msTransform =
+	    img.style.OTransform = img.style.transform;
+
+	  };
+
+	};
+
+	cats[0] = new Cat();
+
+	// This allows us to move the cat even whilst in an iFrame.
+	Leap.loopController.setBackground(true)
+</script>
+
 <script>
 // Store frame for motion functions
 var previousFrame = null;
@@ -240,23 +314,5 @@ function pauseForGestures() {
 }
 
 </script>
-</head>
-<body>
-<h1>Leap Motion JavaScript Sample</h1>
-<div id="main">
-  <button id="pause" onclick="togglePause()">Pause</button>
-  <input type="checkbox" id="pauseOnGesture" onclick="pauseForGestures()">Pause on gesture</input>
-  <h3>Frame data:</h3>
-  <div id="frameData"></div>
-  <div style="clear:both;"></div>
-  <h3>Hand data:</h3>
-  <div id="handData"></div>
-  <div style="clear:both;"></div>
-  <h3>Finger and tool data:</h3>
-  <div id="pointableData"></div>
-  <div style="clear:both;"></div>
-  <h3>Gesture data:</h3>
-  <div id="gestureData"></div>
-</div>
-</body>
+
 </html>
