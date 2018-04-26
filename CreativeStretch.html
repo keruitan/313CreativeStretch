@@ -86,6 +86,7 @@ See additional libraries, guides, and examples at:
   //var axisHelper = new THREE.AxisHelper( 100 );
   //scene.add( axisHelper );
   var controls = new THREE.OrbitControls( camera, renderer.domElement );
+
   Leap.loopController.on('handFound', function(hand) {
     document.querySelector('canvas').style.display = 'block';
   }).on('handLost', function(hand){
@@ -103,22 +104,22 @@ See additional libraries, guides, and examples at:
 	Leap.loop(function(frame) {
 
 	  frame.hands.forEach(function(hand, index) {
-
-
 	    var cat = ( puppets[0] || (puppets[0] = new Cat()) );
       var pacman = ( puppets[1] || (puppets[1] = new Pacman()) );
       //var pirate = ( puppets[2] || (puppets[2] = new Pirate()) );
-      //if(hand.grabStrength > .8){
-      //if(hand.pointableExtended){
-      //console.log(document.pacman.getBoundingClientRect());
-       console.log(hand.type=="right");
+
+      //if a user's hand is in a fist, the boneHands will disappear
+      if(hand.grabStrength > .9){
+        console.log("inside grabstrenght")
+        document.querySelector('canvas').style.display = 'none';
+      }
+
       if(hand.type == "right" && hand.palmPosition[2] < 0){  // && equalPosn(pacman)){
           //  .use('boneHand', {
   	      //  targetEl: document.body,
   	      //  arm: false,
   	      //  opacity: 0
-  	      // })
-          console.log("moving pacman (right hand)");
+  	      // };
         pacman.setTransform(hand.screenPosition(), hand.roll(), 25, 23);}
 
       //if it's your left hand, move the cat
