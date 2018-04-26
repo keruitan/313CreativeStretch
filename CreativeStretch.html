@@ -102,10 +102,10 @@ See additional libraries, guides, and examples at:
 	var puppets = {};
 
 	Leap.loop(function(frame) {
-
+    var cat = ( puppets[0] || (puppets[0] = new Cat()) );
+    var pacman = ( puppets[1] || (puppets[1] = new Pacman()) );
 	  frame.hands.forEach(function(hand, index) {
-	    var cat = ( puppets[0] || (puppets[0] = new Cat()) );
-      var pacman = ( puppets[1] || (puppets[1] = new Pacman()) );
+
       //var pirate = ( puppets[2] || (puppets[2] = new Pirate()) );
 
       //if a user's hand is in a fist, the boneHands will disappear
