@@ -98,29 +98,32 @@ See additional libraries, guides, and examples at:
 
 <!--Here is the Movement stuff-->
 <script type="text/javascript">
-	var cats = {};
-  //var cat = new Cat();
-  //var pacman = new Pacman();
+	var puppets = {};
+
 	Leap.loop(function(frame) {
 
 	  frame.hands.forEach(function(hand, index) {
 
-	    var cat = ( cats[index] || (cats[index] = new Cat()) );
-      var pacman = ( cats[index] || (cats[index] = new Pacman()) );
-      var pirate = ( cats[index] || (cats[index] = new Pirate()) );
+
+	    var cat = ( puppets[0] || (puppets[0] = new Cat()) );
+      var pacman = ( puppets[1] || (puppets[1] = new Pacman()) );
+      //var pirate = ( puppets[2] || (puppets[2] = new Pirate()) );
       //if(hand.grabStrength > .8){
       //if(hand.pointableExtended){
       //console.log(document.pacman.getBoundingClientRect());
-
+       console.log(hand.type=="right");
       if(hand.type == "right" && hand.palmPosition[2] < 0){  // && equalPosn(pacman)){
-        //   .use('boneHand', {
-  	    //   targetEl: document.body,
-  	    //   arm: false,
-  	    //   opacity: 0
-  	    // })
+          //  .use('boneHand', {
+  	      //  targetEl: document.body,
+  	      //  arm: false,
+  	      //  opacity: 0
+  	      // })
+          console.log("moving pacman (right hand)");
         pacman.setTransform(hand.screenPosition(), hand.roll(), 25, 23);}
 
+      //if it's your left hand, move the cat
       if(hand.type == "left" && hand.palmPosition[2] < 0){ // && equalPosn(cat)){
+         console.log("moving cat (left hand)");
 	       cat.setTransform(hand.screenPosition(), hand.roll(), 25, 23);}
 
 
@@ -129,65 +132,64 @@ See additional libraries, guides, and examples at:
 	}).use('screenPosition', {scale: 0.25});
 
 
-	var Cat = function() {
-	  var cat = this;
-	  var img = document.createElement('img');
-	  img.src = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/109794/cat_2.png';
-	  img.style.position = 'absolute';
+  var Cat = function() {
+    var cat = this;
+    var img = document.createElement('img');
+    img.src = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/109794/cat_2.png';
+    img.style.position = 'absolute';
 
-	  img.onload = function () {
-	    cat.setTransform([window.innerWidth/7, window.innerHeight - window.innerHeight*(1/6)], 0, 10, 8);
-	    document.body.appendChild(img);
-	  }
+    img.onload = function () {
+      cat.setTransform([window.innerWidth/7, window.innerHeight - window.innerHeight*(1/6)], 0, 10, 8);
+      document.body.appendChild(img);
+    }
 
-	  cat.setTransform = function(position, rotation, height, width) {
+    cat.setTransform = function(position, rotation, height, width) {
 
-	    img.style.left = position[0] - img.width  / 2 + 'px';
-	    img.style.top  = position[1] - img.height / 2 + 'px';
+      img.style.left = position[0] - img.width  / 2 + 'px';
+      img.style.top  = position[1] - img.height / 2 + 'px';
       img.style.height = height + "%";
       img.style.width = width + "%";
 
-	    img.style.transform = 'rotate(' + -rotation + 'rad)';
+      img.style.transform = 'rotate(' + -rotation + 'rad)';
 
-	    img.style.webkitTransform = img.style.MozTransform = img.style.msTransform =
-	    img.style.OTransform = img.style.transform;
+      img.style.webkitTransform = img.style.MozTransform = img.style.msTransform =
+      img.style.OTransform = img.style.transform;
 
-	  };
+    };
 
-	};
+  };
 
-	var Pacman = function() {
-	  var pacman = this;
-	  var img = document.createElement('img');
-	  img.src = './200px-Pac_Man.svg.png';
-	  img.style.position = 'absolute';
-	  img.onload = function () {
-	    pacman.setTransform([window.innerWidth*.9,window.innerHeight - window.innerHeight*(1/6)], 0, 10, 8);
-	    document.body.appendChild(img);
-	  }
+  var Pacman = function() {
+    var pacman = this;
+    var img = document.createElement('img');
+    img.src = './200px-Pac_Man.svg.png';
+    img.style.position = 'absolute';
+    img.onload = function () {
+      pacman.setTransform([window.innerWidth*.9,window.innerHeight - window.innerHeight*(1/6)], 0, 10, 8);
+      document.body.appendChild(img);
+    }
 
-	  pacman.setTransform = function(position, rotation, height, width) {
+    pacman.setTransform = function(position, rotation, height, width) {
 
-	    img.style.left = position[0] - img.width  / 2 + 'px';
-	    img.style.top  = position[1] - img.height / 2 + 'px';
+      img.style.left = position[0] - img.width  / 2 + 'px';
+      img.style.top  = position[1] - img.height / 2 + 'px';
       img.style.height = height + "%";
       img.style.width = width + "%";
 
-	    img.style.transform = 'rotate(' + -rotation + 'rad)';
+      img.style.transform = 'rotate(' + -rotation + 'rad)';
 
-	    img.style.webkitTransform = img.style.MozTransform = img.style.msTransform =
-	    img.style.OTransform = img.style.transform;
+      img.style.webkitTransform = img.style.MozTransform = img.style.msTransform =
+      img.style.OTransform = img.style.transform;
 
-	  };
-
+    };
+  };
 
     var Pirate = function() {
   	  var pirate = this;
   	  var img = document.createElement('img');
   	  img.src = 'https://www.nickgowman.com/wp-content/uploads/2017/02/fierce-cartoon-pirate.png';
   	  img.style.position = 'absolute';
-      //img.style.height = "10%";
-      //img.style.width = "8%";
+
   	  img.onload = function () {
   	    pirate.setTransform([window.innerWidth*.33, window.innerHeight - window.innerHeight*(1/6)], 0, 10, 8);
   	    document.body.appendChild(img);
@@ -209,7 +211,7 @@ See additional libraries, guides, and examples at:
 
   	};
 
-	};
+
 //returns true if hand.screenPosition == position of object
   equalPosn = function(object){
     var obj = object.getBoundingClientRect();
@@ -225,9 +227,9 @@ See additional libraries, guides, and examples at:
 
 
 
-	cats[0] = new Cat();
-	cats[1] = new Pacman();
-	cats[2] = new Pirate();
+	//cats[0] = new Cat();
+	//cats[1] = new Pacman();
+	//cats[2] = new Pirate();
 
 	// This allows us to move the cat even whilst in an iFrame.
 	Leap.loopController.setBackground(true)
