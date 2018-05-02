@@ -21,353 +21,150 @@ See additional libraries, guides, and examples at:
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Leap Motion Creative Stretch</title>
-<script src="leap-0.6.4.js"></script>
-<script src="https://js.leapmotion.com/leap-0.6.4.js"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Leap Motion Creative Stretch</title>
+	<script src="leap-0.6.4.js"></script>
+	<script src="https://js.leapmotion.com/leap-0.6.4.js"></script>
 </head>
 
 <body>
-<h1>Leap Motion Creative Stretch</h1>
-<!-- <canvas id="canvas" width="800" height="600"></canvas> -->
-<div style="display:none;">
-  <img id="source" src="./200px-Pac_Man.svg.png"
-       width="300" height="227">
-</div>
-<!-- <div id="main">
-  <button id="pause" onclick="togglePause()">Pause</button>
-  <input type="checkbox" id="pauseOnGesture" onclick="pauseForGestures()">Pause on gesture</input>
-  <h3>Frame data:</h3>
-  <div id="frameData"></div>
-  <div style="clear:both;"></div>
-  <h3>Hand data:</h3>
-  <div id="handData"></div>
-  <div style="clear:both;"></div>
-  <h3>Finger and tool data:</h3>
-  <div id="pointableData"></div>
-  <div style="clear:both;"></div>
-  <h3>Gesture data:</h3>
-  <div id="gestureData"></div>
-</div> -->
-
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r82/three.js"></script>
 <script src="https://js.leapmotion.com/leap-plugins-0.1.12.js"></script>
-<script src="CSS3DRenderer.js"></script>
 <script src="OrbitControls.js"></script>
+
+
+<!-- This is the BoneHand Stuff -->
 <script type="text/javascript">
-	var cats = {};
-
-	Leap.loop(function(frame) {
-
-	  frame.hands.forEach(function(hand, index) {
-	    
-	    var cat = ( cats[index] || (cats[index] = new Cat()) );    
-	    cat.setTransform(hand.palmPosition, hand.roll());
-	    
-	  });
-	  
-	}).use('screenPosition', {scale: 0.25})
-	//    .use('transform', {vr: true})
-	    .use('boneHand', {
-	      targetEl: document.body,
-	      arm: false,
-	      opacity: 0.2
-	    });
+	Leap.loop()
+	.use('boneHand', {
+		targetEl: document.body,
+		arm: false,
+		opacity: 0.8
+	});
 
 	var scene    = Leap.loopController.plugins.boneHand.scene;
-  var camera   = Leap.loopController.plugins.boneHand.camera;
-  var renderer = Leap.loopController.plugins.boneHand.renderer;
+	var camera   = Leap.loopController.plugins.boneHand.camera;
+	var renderer = Leap.loopController.plugins.boneHand.renderer;
+	var controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-  var Cat = function() {
-    var cat = this;
-    var img = document.createElement('img');
-    img.src = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/109794/cat_2.png';
-    img.style.position = 'absolute';
-    img.onload = function () {
-      cat.setTransform([window.innerWidth/2,window.innerHeight/2], 0);
-      document.body.appendChild(img);
-    }
-
-    cat.setTransform = function(position, rotation) {
-    	console.log('position: ', position);
-    	var img = document.createElement('img');
-    	img.src = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/109794/cat_2.png';
-    	var object = new THREE.CSS3DObject( img );
-	    object.position = position;
-	    object.rotation = rotation;
-	    scene.add( object );
-
-	    renderer = new THREE.CSS3DRenderer();
-	    renderer.setSize( window.innerWidth, window.innerHeight );
-	    document.body.appendChild( renderer.domElement );
-
-      /*img.style.left = position[0] - img.width  / 2 + 'px';
-      img.style.top  = position[1] - img.height / 2 + 'px';
-
-      img.style.transform = 'rotate(' + -rotation + 'rad)';
-      
-      img.style.webkitTransform = img.style.MozTransform = img.style.msTransform =
-      img.style.OTransform = img.style.transform;*/
-
-    };
-
-  };
-
-  var Pacman = function() {
-    var pacman = this;
-    var img = document.createElement('img');
-    img.src = './200px-Pac_Man.svg.png';
-    img.style.position = 'absolute';
-    img.onload = function () {
-      pacman.setTransform([window.innerWidth/2,window.innerHeight/2], 0);
-      document.body.appendChild(img);
-    }
-    
-    pacman.setTransform = function(position, rotation) {
-
-      img.style.left = position[0] - img.width  / 2 + 'px';
-      img.style.top  = position[1] - img.height / 2 + 'px';
-
-      img.style.transform = 'rotate(' + -rotation + 'rad)';
-      
-      img.style.webkitTransform = img.style.MozTransform = img.style.msTransform =
-      img.style.OTransform = img.style.transform;
-
-    };
-
-  };
-
-  cats[0] = new Cat();
-  //cats[1] = new Pacman();
-  //cats[2] = new Cat();
-
-  var controls = new THREE.OrbitControls( camera, renderer.domElement );
-  Leap.loopController.on('handFound', function(hand) {
-    document.querySelector('canvas').style.display = 'block';
-  })/*.on('handLost', function(hand){
-    if (Leap.loopController.frame(0).hands.length === 0){
-      document.querySelector('canvas').style.display = 'none';
-    }
-  })*/;
-  //document.getElementById('view-source').href = "view-source:" + window.location.href
+	Leap.loopController.on('handFound', function(hand) {
+		document.querySelector('canvas').style.display = 'block';
+	}).on('handLost', function(hand){
+		if (Leap.loopController.frame(0).hands.length === 0){
+			document.querySelector('canvas').style.display = 'none';
+		}
+	});
+	//document.getElementById('view-source').href = "view-source:" + window.location.href
 </script>
 
-<!-- <script>
-// Store frame for motion functions
-var previousFrame = null;
-var paused = false;
-var pauseOnGesture = false;
+<!--Here is the Movement stuff-->
+<script type="text/javascript">
+	var puppets = {};
 
-// Setup Leap loop with frame callback function
-var controllerOptions = {enableGestures: true};
+	// background
+	var curtains = this;
+	var img = document.createElement('img');
+	img.src = 'https://g2mediapros.com/wp-content/uploads/2015/08/Stage-curtains.jpg';
+	img.style.position = 'absolute';
 
-// to use HMD mode:
-// controllerOptions.optimizeHMD = true;
+	img.onload = function () {
+		img.style.left = 0 + 'px';
+		img.style.top  = 0 + 'px';
+		img.style.height = 100 + "%";
+		img.style.width = 100 + "%";
+		img.style.zIndex = -1; // set depth of image to be below the puppets
+		document.body.appendChild(img);
+	}
 
-Leap.loop(controllerOptions, function(frame) {
-  if (paused) {
-    return; // Skip this update
-  }
+	Leap.loop(function(frame) {
+		//var curtains = new Curtains();
+		var ghost = ( puppets[0] || (puppets[0] = new Ghost()) );
+		var pacman = ( puppets[1] || (puppets[1] = new Pacman()) );
 
-  // Display Frame object data
-  var frameOutput = document.getElementById("frameData");
+		frame.hands.forEach(function(hand, index) {
+		//if a user's hand is in a fist, the boneHands will disappear
+		if(hand.grabStrength > .9){
+			console.log("inside grabstrength")
+			document.querySelector('canvas').style.display = 'none';
+		}
 
-  var frameString = "Frame ID: " + frame.id  + "<br />"
-                  + "Timestamp: " + frame.timestamp + " &micro;s<br />"
-                  + "Hands: " + frame.hands.length + "<br />"
-                  + "Fingers: " + frame.fingers.length + "<br />"
-                  + "Tools: " + frame.tools.length + "<br />"
-                  + "Gestures: " + frame.gestures.length + "<br />";
+		if(hand.type == "right"){
+			// if hand is closed, change pacman image to close mouth, otherwise set to open mouth
+			if(hand.grabStrength > .6) {
+				pacman.setImg('./CLOSED PAC MAN.png');
+			} else {
+				pacman.setImg('./200px-Pac_Man.svg.png');
+			}
 
-  // Frame motion factors
-  if (previousFrame && previousFrame.valid) {
-    var translation = frame.translation(previousFrame);
-    frameString += "Translation: " + vectorToString(translation) + " mm <br />";
+			pacman.setTransform(hand.screenPosition(), hand.roll(), 35, 20);
+		}
 
-    var rotationAxis = frame.rotationAxis(previousFrame);
-    var rotationAngle = frame.rotationAngle(previousFrame);
-    frameString += "Rotation axis: " + vectorToString(rotationAxis, 2) + "<br />";
-    frameString += "Rotation angle: " + rotationAngle.toFixed(2) + " radians<br />";
+		//if it's your left hand, move the ghost
+		if(hand.type == "left"){
+			console.log("moving ghost (left hand)");
+			ghost.setImg('./ghostgif.gif');
+			ghost.setTransform(hand.screenPosition(), hand.roll(), 30, 20);}
+		});
 
-    var scaleFactor = frame.scaleFactor(previousFrame);
-    frameString += "Scale factor: " + scaleFactor.toFixed(2) + "<br />";
-  }
-  frameOutput.innerHTML = "<div style='width:300px; float:left; padding:5px'>" + frameString + "</div>";
+	}).use('screenPosition', {scale: 0.25});
 
-  // Display Hand object data
-  var handOutput = document.getElementById("handData");
-  var handString = "";
-  if (frame.hands.length > 0) {
-    for (var i = 0; i < frame.hands.length; i++) {
-      var hand = frame.hands[i];
+	var Ghost = function() {
+		var ghost = this;
+		var img = document.createElement('img');
+		img.src = './ghostgif.gif';
+		img.style.position = 'absolute';
 
-      handString += "<div style='width:300px; float:left; padding:5px'>";
-      handString += "Hand ID: " + hand.id + "<br />";
-      handString += "Type: " + hand.type + " hand" + "<br />";
-      handString += "Direction: " + vectorToString(hand.direction, 2) + "<br />";
-      handString += "Palm position: " + vectorToString(hand.palmPosition) + " mm<br />";
-      handString += "Grab strength: " + hand.grabStrength + "<br />";
-      handString += "Pinch strength: " + hand.pinchStrength + "<br />";
-      handString += "Confidence: " + hand.confidence + "<br />";
-      handString += "Arm direction: " + vectorToString(hand.arm.direction()) + "<br />";
-      handString += "Arm center: " + vectorToString(hand.arm.center()) + "<br />";
-      handString += "Arm up vector: " + vectorToString(hand.arm.basis[1]) + "<br />";
+		img.onload = function () {
+			ghost.setTransform([window.innerWidth/7, window.innerHeight - window.innerHeight*(1/6)], 0, 10, 6);
+			document.body.appendChild(img);
+		}
 
-      // Hand motion factors
-      if (previousFrame && previousFrame.valid) {
-        var translation = hand.translation(previousFrame);
-        handString += "Translation: " + vectorToString(translation) + " mm<br />";
+		ghost.setTransform = function(position, rotation, height, width) {
 
-        var rotationAxis = hand.rotationAxis(previousFrame, 2);
-        var rotationAngle = hand.rotationAngle(previousFrame);
-        handString += "Rotation axis: " + vectorToString(rotationAxis) + "<br />";
-        handString += "Rotation angle: " + rotationAngle.toFixed(2) + " radians<br />";
+			img.style.left = position[0] + 'px';
+			img.style.top  = position[1] + 'px';
+			img.style.height = height + "%";
+			img.style.width = width + "%";
 
-        var scaleFactor = hand.scaleFactor(previousFrame);
-        handString += "Scale factor: " + scaleFactor.toFixed(2) + "<br />";
-      }
+			img.style.transform = 'rotate(' + -rotation + 'rad)';
 
-      // IDs of pointables associated with this hand
-      if (hand.pointables.length > 0) {
-        var fingerIds = [];
-        for (var j = 0; j < hand.pointables.length; j++) {
-          var pointable = hand.pointables[j];
-            fingerIds.push(pointable.id);
-        }
-        if (fingerIds.length > 0) {
-          handString += "Fingers IDs: " + fingerIds.join(", ") + "<br />";
-        }
-      }
+			img.style.webkitTransform = img.style.MozTransform = img.style.msTransform =
+			img.style.OTransform = img.style.transform;
+		};
 
-      handString += "</div>";
-    }
-  }
-  else {
-    handString += "No hands";
-  }
-  handOutput.innerHTML = handString;
+		ghost.setImg = function(imgURL) {
+			img.src = imgURL;
+		};
+	};
 
-  // Display Pointable (finger and tool) object data
-  var pointableOutput = document.getElementById("pointableData");
-  var pointableString = "";
-  if (frame.pointables.length > 0) {
-    var fingerTypeMap = ["Thumb", "Index finger", "Middle finger", "Ring finger", "Pinky finger"];
-    var boneTypeMap = ["Metacarpal", "Proximal phalanx", "Intermediate phalanx", "Distal phalanx"];
-    for (var i = 0; i < frame.pointables.length; i++) {
-      var pointable = frame.pointables[i];
+	var Pacman = function() {
+		var pacman = this;
+		var img = document.createElement('img');
+		img.src = './200px-Pac_Man.svg.png';
+		img.style.position = 'absolute';
 
-      pointableString += "<div style='width:250px; float:left; padding:5px'>";
+		img.onload = function () {
+			pacman.setTransform([window.innerWidth*.8,window.innerHeight - window.innerHeight*(1/6)], 0, 10, 6);
+			document.body.appendChild(img);
+		}
 
-      if (pointable.tool) {
-        pointableString += "Pointable ID: " + pointable.id + "<br />";
-        pointableString += "Classified as a tool <br />";
-        pointableString += "Length: " + pointable.length.toFixed(1) + " mm<br />";
-        pointableString += "Width: "  + pointable.width.toFixed(1) + " mm<br />";
-        pointableString += "Direction: " + vectorToString(pointable.direction, 2) + "<br />";
-        pointableString += "Tip position: " + vectorToString(pointable.tipPosition) + " mm<br />"
-        pointableString += "</div>";
-      }
-      else {
-        pointableString += "Pointable ID: " + pointable.id + "<br />";
-        pointableString += "Type: " + fingerTypeMap[pointable.type] + "<br />";
-        pointableString += "Belongs to hand with ID: " + pointable.handId + "<br />";
-        pointableString += "Classified as a finger<br />";
-        pointableString += "Length: " + pointable.length.toFixed(1) + " mm<br />";
-        pointableString += "Width: "  + pointable.width.toFixed(1) + " mm<br />";
-        pointableString += "Direction: " + vectorToString(pointable.direction, 2) + "<br />";
-        pointableString += "Extended?: "  + pointable.extended + "<br />";
-        pointable.bones.forEach( function(bone){
-          pointableString += boneTypeMap[bone.type] + " bone <br />";
-          pointableString += "Center: " + vectorToString(bone.center()) + "<br />";
-          pointableString += "Direction: " + vectorToString(bone.direction()) + "<br />";
-          pointableString += "Up vector: " + vectorToString(bone.basis[1]) + "<br />";
-        });
-        pointableString += "Tip position: " + vectorToString(pointable.tipPosition) + " mm<br />";
-        pointableString += "</div>";
-      }
-    }
-  }
-  else {
-    pointableString += "<div>No pointables</div>";
-  }
-  pointableOutput.innerHTML = pointableString;
+		pacman.setTransform = function(position, rotation, height, width) {
+			img.style.left = position[0] + 'px';
+			img.style.top  = position[1] + 'px';
+			img.style.height = height + "%";
+			img.style.width = width + "%";
 
-  // Display Gesture object data
-  var gestureOutput = document.getElementById("gestureData");
-  var gestureString = "";
-  if (frame.gestures.length > 0) {
-    if (pauseOnGesture) {
-      togglePause();
-    }
-    for (var i = 0; i < frame.gestures.length; i++) {
-      var gesture = frame.gestures[i];
-      gestureString += "Gesture ID: " + gesture.id + ", "
-                    + "type: " + gesture.type + ", "
-                    + "state: " + gesture.state + ", "
-                    + "hand IDs: " + gesture.handIds.join(", ") + ", "
-                    + "pointable IDs: " + gesture.pointableIds.join(", ") + ", "
-                    + "duration: " + gesture.duration + " &micro;s, ";
+			img.style.transform = 'rotate(' + -rotation + 'rad)';
 
-      switch (gesture.type) {
-        case "circle":
-          gestureString += "center: " + vectorToString(gesture.center) + " mm, "
-                        + "normal: " + vectorToString(gesture.normal, 2) + ", "
-                        + "radius: " + gesture.radius.toFixed(1) + " mm, "
-                        + "progress: " + gesture.progress.toFixed(2) + " rotations";
-          break;
-        case "swipe":
-          gestureString += "start position: " + vectorToString(gesture.startPosition) + " mm, "
-                        + "current position: " + vectorToString(gesture.position) + " mm, "
-                        + "direction: " + vectorToString(gesture.direction, 1) + ", "
-                        + "speed: " + gesture.speed.toFixed(1) + " mm/s";
-          break;
-        case "screenTap":
-        case "keyTap":
-          gestureString += "position: " + vectorToString(gesture.position) + " mm";
-          break;
-        default:
-          gestureString += "unkown gesture type";
-      }
-      gestureString += "<br />";
-    }
-  }
-  else {
-    gestureString += "No gestures";
-  }
-  gestureOutput.innerHTML = gestureString;
+			img.style.webkitTransform = img.style.MozTransform = img.style.msTransform =
+			img.style.OTransform = img.style.transform;
+		};
 
-  // Store frame for motion functions
-  previousFrame = frame;
-})
-
-function vectorToString(vector, digits) {
-  if (typeof digits === "undefined") {
-    digits = 1;
-  }
-  return "(" + vector[0].toFixed(digits) + ", "
-             + vector[1].toFixed(digits) + ", "
-             + vector[2].toFixed(digits) + ")";
-}
-
-function togglePause() {
-  paused = !paused;
-
-  if (paused) {
-    document.getElementById("pause").innerText = "Resume";
-  } else {
-    document.getElementById("pause").innerText = "Pause";
-  }
-}
-
-function pauseForGestures() {
-  if (document.getElementById("pauseOnGesture").checked) {
-    pauseOnGesture = true;
-  } else {
-    pauseOnGesture = false;
-  }
-}
-
-</script> -->
+		pacman.setImg = function(imgURL) {
+			img.src = imgURL;
+		};
+	};
+</script>
 
 </html>
